@@ -1,0 +1,326 @@
+package com.hfad.smartgardn;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.PersistableBundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.SearchView;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
+
+import static android.widget.Toast.LENGTH_SHORT;
+
+public class MainActivity extends AppCompatActivity
+{
+    public final static int GETBACK = 0;
+    public final static int AUTOMODE = 1;
+    public final static int HAND = 2;
+    public final static int DEFAULT = 3;
+    private Switch modestate;
+    private String state = null;
+    private boolean isset = false;
+    protected SharedPreferences statePreferences;
+    protected SharedPreferences.Editor stateEditor;
+    private Button auto;
+    private Button manual;
+    private SearchView search;
+    int progress=0;
+//    Handler listener=new Handler(new Handler.Callback(){
+////接收花盆回传数据----------------------------------------
+//        @Override
+//        public boolean handleMessage(@NonNull Message msg)
+//        {
+//            if (msg.what==1)
+//            {
+//                //拆解获取的数据并显示--------------------------------
+//                Log.d("收到消息：",msg.getData().getString("data"));
+//            }
+//            return false;
+//        }
+//    });
+//    @SuppressLint("NewApi")
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initialize();
+        runGarden();
+        mqtt_connect();
+    }
+
+    //连接mqtt服务器---------------------------------------------------------
+    private void mqtt_connect()
+    {
+        new mqtt_Thread().start();
+    }
+
+    //初始化控件-----------------------------------------------------------------------------
+    public void initialize()
+    {
+        auto = findViewById(R.id.auto);
+        manual = findViewById(R.id.hand);
+        modestate = findViewById(R.id.modestate);
+        modestate.setOnCheckedChangeListener(new Switchlitsener());
+        spysearch();
+    }
+
+    //运行花园----------------------------------------------------------------------------
+    private void runGarden()
+    {
+        getState();
+    }
+
+    //获取运行模式状态------------------------------------------------------------------------------
+    private void getState()
+    {
+        statePreferences = getSharedPreferences("state", MODE_PRIVATE);
+        stateEditor = statePreferences.edit();
+        state = statePreferences.getString("state", null);
+        isset = statePreferences.getBoolean("isset", false);
+//
+        if (state != null) {
+            modestate.setText(state);
+            modestate.setChecked(isset);
+        } else {
+            modestate.setText("默认状态");
+            modestate.setChecked(false);
+        }
+    }
+
+    //进入自动模式界面----------------------------------------------------------------------------
+    public void automode(View v)
+    {
+        if (modestate.isChecked()) {
+            Intent a = new Intent(MainActivity.this, AutoMode.class);
+            startActivityForResult(a, 1);
+        } else askenter();
+    }
+    //进入手动模式界面---------------------------------------------------------------------------------
+    public void handmode(View view)
+    {
+        if (!modestate.isChecked()) {
+            Intent b = new Intent(this, ManualMode.class);
+            startActivityForResult(b, 2);
+        } else askenter();
+    }
+    //退出花园-----------------------------------------------------------------------------------
+    public void leavegarden (View v)
+    {
+        askleave();
+    }
+ //搜索框执行操作-----------------------------------------------------------------------------------
+   public void  spysearch()
+   {
+       search=findViewById(R.id.search);
+       search.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+       {
+           @Override
+           public boolean onQueryTextSubmit(String query)
+           {
+               Toast.makeText(MainActivity.this,"搜索",LENGTH_SHORT).show();
+               Intent gosearch=new Intent();
+               gosearch.setAction(Intent.ACTION_SEARCH);
+//               Bundle mess=new Bundle();
+//               mess.putCharSequence();
+               gosearch.putExtra("search",search.getQuery());
+               startActivity(gosearch);
+               return false;
+           }
+
+           @Override
+           public boolean onQueryTextChange(String newText)
+           {
+               return false;
+           }
+       });
+
+   }
+    //询问是否要进入另一个模式-------------------------------------------------------------------------
+    private void askenter()
+    {
+        AlertDialog.Builder comfirmer = new AlertDialog.Builder(this);
+        comfirmer.setIcon(R.drawable.assis1);
+        comfirmer.setTitle("花园助手");
+        if (modestate.isChecked())
+        {
+            comfirmer.setMessage("当前处于自动模式，您确定要启用手动模式吗？");
+            comfirmer.setPositiveButton("确定", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    //向花盆发送信息启用手动模式---------------------------
+//                    Message msg1=new Message();
+//                    Bundle bundle1=new Bundle();
+//                    bundle1.putString("data","manual");
+//                    msg1.what=2;
+//                    msg1.setData(bundle1);
+//                    mqtt_Thread.handler.sendMessage(msg1);
+                    //启用手动模式--------------------------------------
+                    modestate.setChecked(false);
+                    Intent a = new Intent(MainActivity.this, ManualMode.class);
+                    startActivityForResult(a, 1);
+
+                }
+            });
+            comfirmer.setNegativeButton("取消", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                }
+            });
+            comfirmer.show();
+        }
+        else
+         {
+            comfirmer.setMessage("当前处于手动模式，您确定要启用自动模式吗？");
+            comfirmer.setPositiveButton("确定", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+
+                    //向花盆发送信息启用自动模式--------------------
+                    Message msg1=new Message();
+                    Bundle bundle1=new Bundle();
+                    bundle1.putString("data","manual");
+                    msg1.what=2;
+                    msg1.setData(bundle1);
+                    mqtt_Thread.handler.sendMessage(msg1);
+                    //启用自动模式---------------------------------
+                    Intent a = new Intent(MainActivity.this, AutoMode.class);
+                    modestate.setChecked(true);
+                    startActivityForResult(a, 2);
+
+                }
+            });
+            comfirmer.setNegativeButton("取消", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                }
+            });
+            comfirmer.show();
+        }
+    }
+
+//显示退出花园确认框----------------------------------------------------------------------------
+        private void askleave()
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("您确定要离开我吗？");
+            builder.setTitle("花园小助手");
+            builder.setIcon(R.drawable.assis1);
+            builder.setPositiveButton("去意已决", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    finish();
+                }
+            });
+            builder.setNegativeButton("一时手滑", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    Toast play = Toast.makeText(MainActivity.this, "看来你还是舍不得我的，嘻嘻", LENGTH_SHORT);
+                    play.setGravity(Gravity.CENTER_HORIZONTAL, 0, 500);
+                    play.show();
+                }
+            });
+            builder.show();
+        }
+
+//从子界面返回后执行的操作----------------------------------------------------------------------------------
+        @Override
+        protected void onActivityResult ( int requestCode, int resultCode, @Nullable Intent data)
+        {
+            super.onActivityResult(requestCode, resultCode, data);
+            switch (resultCode)
+            {
+                //返回键操作--------------------------------
+                case GETBACK:
+                    break;
+                //自动模式模式设置参数---------------------------
+                case DEFAULT:
+                    Toast.makeText(MainActivity.this, "已执行设定", LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        //旋转屏幕后保留当前数据-----------------------------------------------------------------
+//    @Override
+//    protected void onSaveInstanceState(Bundle savedInstanceState)
+//    {
+//        super.onSaveInstanceState(savedInstanceState);
+//        TextView st=findViewById(R.id.modestate);
+//        String statedata=st.getText().toString();
+//        savedInstanceState.putString("prestate", statedata);
+//    }
+
+
+//开关监听器-----------------------------------------------------------------------------------
+        class Switchlitsener implements CompoundButton.OnCheckedChangeListener
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+
+                if (isChecked) {
+                    buttonView.setText("自动模式");
+                    Toast.makeText(MainActivity.this, "已启用自动模式", LENGTH_SHORT).show();
+                    stateEditor.putString("state", "自动模式");
+                    //向花盆发送指令开启自动模式------------------
+                    Message msg2=new Message();
+                    Bundle bundle1=new Bundle();
+                    bundle1.putString("data","auto");
+                    msg2.what=2;
+                    msg2.setData(bundle1);
+                    mqtt_Thread.handler.sendMessage(msg2);
+                } else {
+                    buttonView.setText("手动模式");
+                    Toast.makeText(MainActivity.this, "已启用手动模式", LENGTH_SHORT).show();
+                    stateEditor.putString("state", "手动模式");
+                    //向花盆发送指令开启手动模式------------------
+//                    Message msg3=new Message();
+//                    Bundle bundle1=new Bundle();
+//                    bundle1.putString("data","manual");
+//                    msg3.what=2;
+//                    msg3.setData(bundle1);
+//                    mqtt_Thread.handler.sendMessage(msg3);
+                }
+                stateEditor.putBoolean("isset", isChecked);
+                stateEditor.commit();
+            }
+        }
+    }
