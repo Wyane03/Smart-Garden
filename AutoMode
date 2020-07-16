@@ -1,0 +1,269 @@
+package com.hfad.smartgardn;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class AutoMode extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener
+{
+    //数据保存工具
+    SharedPreferences dataPreferences;
+    SharedPreferences.Editor dataEditor;
+//数据显示框----------------------------------------------
+        private  TextView soil_temperature_text;
+        private  TextView air_temperature_text;
+        private  TextView soil_humidity_text;
+        private  TextView air_humidity_text;
+        private  TextView light_text;
+        private  TextView shade_text;
+//拖动条------------------------------------------------------
+        private SeekBar soil_temperature;
+        private SeekBar air_temperature;
+        private SeekBar soil_humidity;
+        private SeekBar air_humidity;
+        private SeekBar light;
+        private SeekBar shade;
+ //数据------------------------------------------------------
+        public String soil_temperature_data;
+    public String air_temperature_data;
+    public String soil_humidity_data;
+    public String air_humidity_data;
+    public String light_data;
+    public String shade_data;
+        //界面初始化
+        @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_auto_mode);
+        Intent intent = getIntent();
+        initialize();
+        getlastdata();
+    }
+//获取上次设定数据
+    private void getlastdata()
+    {
+        dataPreferences=getSharedPreferences("data",MODE_PRIVATE);
+        dataEditor=dataPreferences.edit();
+//   //获取上次设定数据----------------------------------------------------------------------------
+        soil_temperature_data= dataPreferences.getString("lastsoiltemperature","0");
+        air_temperature_data=dataPreferences.getString("lastairtemperature","0");
+        soil_humidity_data=dataPreferences.getString("lastsoilhumidity","0");
+        air_humidity_data=dataPreferences.getString("lastairhumidity","0");
+        light_data=dataPreferences.getString("lastlight","0");
+        shade_data=dataPreferences.getString("lastshade","0");
+//  //当前显示上次设定数据-------------------------------------------------------------------------------
+        soil_temperature.setProgress(Integer.parseInt(soil_temperature_data));
+        soil_temperature_text.setText(soil_temperature_data);
+
+        air_temperature.setProgress(Integer.parseInt(air_temperature_data));
+        air_temperature_text.setText(air_temperature_data);
+
+        soil_humidity.setProgress(Integer.parseInt(soil_humidity_data));
+        soil_humidity_text.setText(soil_humidity_data);
+
+        air_humidity.setProgress(Integer.parseInt(air_humidity_data));
+        air_humidity_text.setText(air_humidity_data);
+
+        light.setProgress(Integer.parseInt(light_data));
+        light_text.setText(light_data);
+
+        shade.setProgress(Integer.parseInt(shade_data));
+        shade_text.setText(shade_data);
+
+    }
+
+    //活动初始化布置工作
+    private void initialize()
+    {
+        //获取拖动条数据显示框
+        soil_temperature_text=findViewById(R.id.soiltemperature_text);
+        air_temperature_text=findViewById(R.id.airtemperature_text);
+        soil_humidity_text=findViewById(R.id.soilhumidity_text);
+        air_humidity_text  =findViewById(R.id.airhumidity_text);
+        light_text=findViewById(R.id.light_text);
+        shade_text =findViewById(R.id.shade_text);
+
+      //为拖动条注册监听器
+        soil_temperature=findViewById(R.id.soiltemperature2);
+        soil_temperature.setOnSeekBarChangeListener(this);
+
+        air_temperature=findViewById(R.id.airtemperature2);
+        air_temperature.setOnSeekBarChangeListener(this);
+
+        soil_humidity=findViewById(R.id.soilhumidity2);
+        soil_humidity.setOnSeekBarChangeListener(this);
+
+        air_humidity=findViewById(R.id.airhumidity2);
+        air_humidity.setOnSeekBarChangeListener(this);
+
+        light=findViewById(R.id.light2);
+        light.setOnSeekBarChangeListener(this);
+
+        shade=findViewById(R.id.shade2);
+        shade.setOnSeekBarChangeListener(this);
+    }
+
+    //返回主页
+   public void getback(View v)
+   {
+       //只是返回上一界面
+       Intent back=new Intent();
+        setResult(0,back);
+        finish();
+   }
+
+
+//参数设定并执行
+    public void setauto(View view)
+    {
+//       StringBuilder datastringbuilder=new StringBuilder();
+//       String datastring=datastringbuilder.append(soil_temperature_data+air_temperature_data+soil_humidity_data+air_humidity_data+light_data+shade_data).toString();
+        //执行逻辑业务
+//////////////////////////////////////
+//获取用户设定数据并进行封装
+//       1.土壤温度
+
+//        2.空气温度
+
+//        3.土壤湿度
+
+//        4.空气湿度
+
+//        5.光照强度
+
+//        6.遮光程度
+
+//        Bundle auto_data=new Bundle();
+//        auto_data.putString("soil_temperature",data_soil_temperature);
+//        auto_data.putString("air_temperature",data_air_temperature);
+//        auto_data.putString("soil_humidity",data_soil_humidity);
+//        auto_data.putString("air_humidity",data_air_humidity);
+//        auto_data.putString("light",data_light);
+//        auto_data.putString("shade",data_shade);
+
+        //返回主页面
+        Intent back=new Intent();
+        //向花盆发送指令开启自动模式------------------
+// 模拟传输数据-----
+//        Message msg1=new Message();
+//        Bundle bundle1=new Bundle();
+//        bundle1.putString("data","auto"+datastring);
+//        msg1.what=2;
+//        msg1.setData(bundle1);
+//        mqtt_Thread.handler.sendMessage(msg1);
+
+        setResult(3,back);
+        finish();
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+    {
+        if(fromUser) {
+            switch (seekBar.getId()) {
+                case R.id.soiltemperature2:
+                    String a=Integer.toString(progress);
+                    soil_temperature_text.setText(a);
+                    break;
+
+                case R.id.airtemperature2:
+                    String b=Integer.toString(progress);
+                    air_temperature_text.setText(b);
+                    break;
+
+                case R.id.soilhumidity2:
+                    String c=Integer.toString(progress);
+                    soil_humidity_text.setText(c);
+                    break;
+
+                case R.id.airhumidity2:
+                    String d=Integer.toString(progress);
+                    air_humidity_text.setText(d);
+                    break;
+
+                case R.id.light2:
+                    String e=Integer.toString(progress);
+                    light_text.setText(e);
+                    break;
+
+                case R.id.shade2:
+                    String f=Integer.toString(progress);
+                    shade_text.setText(f);
+                    break;
+
+            }
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar)
+    {
+
+    }
+//保留上次拖动条数据
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar)
+    {
+
+        switch (seekBar.getId())
+        {
+            case R.id.soiltemperature2:
+                soil_temperature_data=Integer.toString(seekBar.getProgress());
+                if(seekBar.getProgress()>30)Toast.makeText(this,"土壤温度好像有点高噢！",Toast.LENGTH_SHORT).show();
+                else if (seekBar.getProgress()<10)Toast.makeText(this,"土壤温度好像有点低噢！",Toast.LENGTH_SHORT).show();
+                dataEditor.putString("lastsoiltemperature", String.valueOf(seekBar.getProgress()));
+                dataEditor.commit();
+                break;
+
+            case R.id.airtemperature2:
+                air_temperature_data=Integer.toString(seekBar.getProgress());
+                if(seekBar.getProgress()==40)Toast.makeText(this,"空气温度已为最大值了噢！",Toast.LENGTH_SHORT).show();
+                else if (seekBar.getProgress()<10)Toast.makeText(this,"空气温度好像有点低噢！",Toast.LENGTH_SHORT).show();
+                dataEditor.putString("lastairtemperature", String.valueOf(seekBar.getProgress()));
+                dataEditor.commit();
+                break;
+
+            case  R.id.soilhumidity2:
+                soil_humidity_data=Integer.toString(seekBar.getProgress());
+                if(seekBar.getProgress()==100)Toast.makeText(this,"土壤湿度已为最大值了噢！",Toast.LENGTH_SHORT).show();
+                dataEditor.putString("lastsoilhumidity", String.valueOf(seekBar.getProgress()));
+                dataEditor.commit();
+                break;
+
+            case  R.id.airhumidity2:
+                air_humidity_data=Integer.toString(seekBar.getProgress());
+                if(seekBar.getProgress()==100)Toast.makeText(this,"空气湿度已为最大值了噢！",Toast.LENGTH_SHORT).show();
+                dataEditor.putString("lastairhumidity", String.valueOf(seekBar.getProgress()));
+                dataEditor.commit();
+                break;
+
+            case R.id.light2:
+                light_data=Integer.toString(seekBar.getProgress());
+                if(seekBar.getProgress()==100)Toast.makeText(this,"光照强度已为最大值了噢！",Toast.LENGTH_SHORT).show();
+                dataEditor.putString("lastlight", String.valueOf(seekBar.getProgress()));
+                dataEditor.commit();
+                break;
+
+            case R.id.shade2:
+                shade_data=Integer.toString(seekBar.getProgress());
+                if(seekBar.getProgress()==100)Toast.makeText(this,"遮光程度已为最大值了噢！",Toast.LENGTH_SHORT).show();
+                dataEditor.putString("lastshade", String.valueOf(seekBar.getProgress()));
+                dataEditor.commit();
+                break;
+
+        }
+    }
+}

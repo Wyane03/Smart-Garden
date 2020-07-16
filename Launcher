@@ -1,0 +1,123 @@
+package com.hfad.smartgardn;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Toast;
+
+public class Launcher extends AppCompatActivity
+{
+//定义字符串资源
+    private String a="含泪播种的人一定能含笑收获！";
+    private String b="只要面对着阳光努力向上，日子就会变得单纯而美好~";
+    private String c="心如花园，思想如种。既得繁花，也生野稗。";
+    private String d="路再长也有终点，夜再长也有尽头。";
+    private String e="生活的理想，就是为了理想的生活。";
+    private String f="花儿不为谁开，也可以为自己开，世界不为谁存在，也可以为自己存在。";
+    private String g="若是美好，叫做精彩。若是糟糕，叫做经历。";
+    private String h="喧嚣与浮躁的从来都不是城市，而是我们的生活和我们的心。";
+    private String i="Always remember that your present situation is not your final destination. The best is yet to come.";
+    private String j="The happiest people don’t have the best of everything, they just make the best of everything.";
+    private String k="Every story has an end, but in life, every end is a new beginning.";
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_launcher);
+        gettips();
+    }
+
+    private void gettips()
+    {
+        int random=(int)(Math.random()*11);
+        String flag=null;
+        switch (random)
+        {
+            case 1:
+                flag=a;
+                break;
+
+            case 2:
+                flag=b;
+                break;
+
+            case 3:
+                flag=c;
+                break;
+
+            case 4:
+                flag=d;
+                break;
+
+            case 5:
+                flag=e;
+                break;
+
+            case 6:
+                flag=f;
+                break;
+
+            case 7:
+                flag=g;
+                break;
+
+            case 8:
+                flag=h;
+                break;
+
+            case 9:
+                flag=i;
+                break;
+
+            case 10:
+                flag=j;
+                break;
+
+            case 11:
+                flag=k;
+                break;
+
+            default:flag="The supreme happiness of life is the conviction that we are loved.";
+            break;
+        }
+        showtips(flag);
+    }
+
+    private void showtips(String flag)
+    {
+        Toast tips=Toast.makeText(Launcher.this,flag,Toast.LENGTH_SHORT);
+        tips.setGravity(Gravity.TOP,0,160);
+        tips.show();
+    }
+//
+//    public void enter1(View v)
+//    {
+//        Handler go=new Handler();
+//        go.post(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                Intent in=new Intent(Launcher.this,MainActivity.class);
+//                startActivity(in);
+//                Launcher.this.finish();
+//            }
+//        });
+//
+//    }
+    public void enter(View v)
+    {
+        Intent in=new Intent(Launcher.this,MainActivity.class);
+        startActivity(in);
+        Launcher.this.finish();
+    }
+}

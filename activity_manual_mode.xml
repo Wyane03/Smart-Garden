@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+
+    android:layout_height="match_parent"
+    tools:context=".ManualMode">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="#FF9966"
+        android:layout_height="70sp">
+        <!--活动页标题-->
+
+        <ImageButton
+            android:layout_width="70sp"
+            android:layout_height="70sp"
+            android:id="@+id/backward"
+            android:onClick="getback"
+            android:background="@drawable/back"
+            ></ImageButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:text="@string/hand"
+            android:textSize="52sp"
+            android:textColor="#ffffff"
+            android:textStyle="italic"
+            android:paddingStart="31sp"
+            android:paddingLeft="31sp"
+            android:id="@+id/hanshow"></TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/picres2"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="200dp">
+
+            <ImageButton
+                android:id="@+id/lightdown"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="100dp"
+                android:background="@drawable/lightdown">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/lightup"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="85dp"
+                android:background="@drawable/lightup"></ImageButton>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="40dp">
+
+            <ImageButton
+                android:id="@+id/curtainclose"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/curtainclose">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/curtainopen"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="256dp"
+                android:background="@drawable/curtainopen"></ImageButton>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="25dp">
+
+            <ImageButton
+                android:id="@+id/soilhumidification"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="72dp"
+                android:background="@drawable/soilhumidification">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/airhumidification"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="125dp"
+                android:background="@drawable/airhumidification"></ImageButton>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp">
+
+            <ImageButton
+                android:id="@+id/watering"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="180dp"
+                android:background="@drawable/watering"></ImageButton>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

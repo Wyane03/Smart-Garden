@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@drawable/picres1"
+    tools:context=".Launcher">
+
+    <TextView
+        android:id="@+id/goin"
+        android:layout_width="260sp"
+        android:layout_height="50sp"
+
+        android:textColor="#99CC99"
+        android:onClick="enter"
+        android:gravity="center"
+        android:layout_marginVertical="660sp"
+        android:layout_gravity="center_horizontal"
+        android:text="进入我的花园>"
+        android:textSize="24sp">
+
+    </TextView>
+</LinearLayout>
